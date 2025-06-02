@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Digestive Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .digestive-system {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .organ-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .organ-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .organ-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .organ-card:hover::before {
+            left: 100%;
+        }
+
+        .organ-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .organ-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .organ-card p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .fun-fact {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .timeline {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .timeline h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: #ffd700;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(10px);
+        }
+
+        .timeline-time {
+            background: #ffd700;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 20px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .quiz-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .quiz-section h2 {
+            margin-bottom: 20px;
+            color: #ffd700;
+        }
+
+        .quiz-button {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .quiz-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .quiz-question {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .quiz-question.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .quiz-option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 2s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍎 The Amazing Journey of Digestion</h1>
+            <p>Discover how your body transforms food into energy!</p>
+        </div>
+
+        <div class="digestive-system">
+            <div class="organ-card" onclick="animateCard(this)">
+                <span class="organ-icon">👄</span>
+                <h3>Mouth</h3>
+                <p>Digestion begins here! Your teeth break down food while saliva starts chemical digestion with enzymes.</p>
+                <div class="fun-fact">Fun Fact: You produce about 1.5 liters of saliva daily!</div>
+            </div>
+
+            <div class="organ-card" onclick="animateCard(this)">
+                <span class="organ-icon">🫁</span>
+                <h3>Esophagus</h3>
+                <p>A muscular tube that pushes food down to your stomach using wave-like contractions called peristalsis.</p>
+                <div class="fun-fact">Fun Fact: Food travels down in just 4-8 seconds!</div>
+            </div>
+
+            <div class="organ-card" onclick="animateCard(this)">
+                <span class="organ-icon">🫃</span>
+                <h3>Stomach</h3>
+                <p>A powerful acid bath! Gastric juice breaks down proteins and kills harmful bacteria.</p>
+                <div class="fun-fact">Fun Fact: Your stomach acid is strong enough to dissolve metal!</div>
+            </div>
+
+            <div class="organ-card" onclick="animateCard(this)">
+                <span class="organ-icon">🌀</span>
+                <h3>Small Intestine</h3>
+                <p>The main absorption center! Nutrients enter your bloodstream through millions of tiny villi.</p>
+                <div class="fun-fact">Fun Fact: If uncoiled, it would be about 20 feet long!</div>
+            </div>
+
+            <div class="organ-card" onclick="animateCard(this)">
+                <span class="organ-icon">🟫</span>
+                <h3>Large Intestine</h3>
+                <p>Water absorption and waste formation happen here. Home to trillions of helpful bacteria!</p>
+                <div class="fun-fact">Fun Fact: Your gut bacteria weigh about 2-5 pounds!</div>
+            </div>
+
+            <div class="organ-card" onclick="animateCard(this)">
+                <span class="organ-icon">🟨</span>
+                <h3>Liver</h3>
+                <p>The ultimate multitasker! Produces bile, detoxifies blood, and stores nutrients.</p>
+                <div class="fun-fact">Fun Fact: Your liver performs over 500 different functions!</div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <h2>⏰ Digestion Timeline</h2>
+            <div class="timeline-item">
+                <div class="timeline-time">0-30 sec</div>
+                <div>Chewing and swallowing in the mouth</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">2-4 hours</div>
+                <div>Stomach acid breaks down food into chyme</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">3-6 hours</div>
+                <div>Small intestine absorbs nutrients</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-time">12-48 hours</div>
+                <div>Large intestine processes waste</div>
+            </div>
+        </div>
+
+        <div class="quiz-section">
+            <h2>🧠 Test Your Knowledge!</h2>
+            <button class="quiz-button" onclick="startQuiz()">Start Digestion Quiz</button>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+
+            <div class="quiz-question" id="question1">
+                <h3>Where does digestion begin?</h3>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Stomach</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">Mouth</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Small Intestine</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Esophagus</div>
+                </div>
+            </div>
+
+            <div class="quiz-question" id="question2">
+                <h3>What is the longest part of the digestive system?</h3>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Stomach</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Large Intestine</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">Small Intestine</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Esophagus</div>
+                </div>
+            </div>
+
+            <div class="quiz-question" id="question3">
+                <h3>Which organ produces bile?</h3>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Pancreas</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">Liver</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Gallbladder</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Stomach</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let totalQuestions = 3;
+
+        function animateCard(card) {
+            card.style.transform = 'scale(1.05) rotateY(10deg)';
+            setTimeout(() => {
+                card.style.transform = 'scale(1) rotateY(0deg)';
+            }, 300);
+        }
+
+        function startQuiz() {
+            currentQuestion = 1;
+            document.getElementById('question1').classList.add('active');
+            updateProgressBar();
+        }
+
+        function checkAnswer(option, isCorrect) {
+            const allOptions = option.parentNode.children;
+            
+            // Disable all options
+            for (let opt of allOptions) {
+                opt.style.pointerEvents = 'none';
+                if (opt === option) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            }
+
+            // Show correct answer if wrong was selected
+            if (!isCorrect) {
+                for (let opt of allOptions) {
+                    if (opt.onclick.toString().includes('true')) {
+                        opt.classList.add('correct');
+                    }
+                }
+            }
+
+            // Move to next question after delay
+            setTimeout(() => {
+                if (currentQuestion < totalQuestions) {
+                    document.getElementById('question' + currentQuestion).classList.remove('active');
+                    currentQuestion++;
+                    document.getElementById('question' + currentQuestion).classList.add('active');
+                    updateProgressBar();
+                } else {
+                    // Quiz complete
+                    setTimeout(() => {
+                        alert('🎉 Great job! You\'ve completed the digestion quiz!');
+                        resetQuiz();
+                    }, 1000);
+                }
+            }, 2000);
+        }
+
+        function updateProgressBar() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            
+            // Reset all questions
+            for (let i = 1; i <= totalQuestions; i++) {
+                const question = document.getElementById('question' + i);
+                question.classList.remove('active');
+                
+                // Reset options
+                const options = question.querySelectorAll('.quiz-option');
+                options.forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                    opt.style.pointerEvents = 'auto';
+                });
+            }
+        }
+
+        // Add some interactive animations on page load
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.organ-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
